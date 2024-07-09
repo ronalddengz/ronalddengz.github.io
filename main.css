@@ -41,7 +41,7 @@ h2 {
 }
 
 html {
-    cursor: url('stuff/cursor.png'), default;
+    cursor: url('stuff/cursor.png'), default !important;
     
 }
 
