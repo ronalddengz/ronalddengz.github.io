@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>email sort</title>
+        <link rel="stylesheet" href="main.css">
+        <style>
+            pre.hljs {
+                background-color: black;
+            }
+            a {
+                text-decoration: none;
+                color: white
+            }
+            a:hover {
+                border-bottom: 1px solid white;
+            }
+            code {
+                font-size: 16px
+            }
+        </style>
+    </head>
+    <body>
+        <h1>legislative email sorting</h1>
+        <br>
+        <p>I wrote some python code that uses <code>BeautifulSoup</code> and <code>requests</code> that reads through downloaded emails and finds all NY State Senate bills mentioned. It returns a .txt file in csv format that you can import into Google Sheets or Excel or whatever.</p>
+        <p>This program was used by the office of <a href="https://www.nysenate.gov/senators/john-c-liu"><span style="color: #205484;">Senator John Liu</span></a> to help organize emails sent by constituents.
+        This is useful if you download your emails and want to find all NY State Senate bills mentioned in them.</p>
+        <p>Check it out <a href="https://github.com/auspiciousfaxer/emailsort"><span style="color: #205484;">here</span></a>.</p>
+        <pre>
+            <code>
+from bs4 import BeautifulSoup
+import requests
+import re
+import os
+
+def clean(name):
+    name = name.replace('.','')
+    name = name.replace('-','')
+    name = name.replace(' ','')
+    name = name.replace('\n','')
+    return(name)
+
+def clean2(name):
+    name = name.replace('None ','')
+    translationTable = str.maketrans('', '', '\'{}[]\"()\n')
+    return name.translate(translationTable)
+
+def findBillNames(inputFile):
+    with open(inputFile, 'r', encoding='utf-8') as doc:
+        content = doc.read()
+    content = content.replace('=20',' ')
+    pattern = r'\b[A|S]\s?[-.]?\s?\d{2,4}[A-Z]?[-]?\b'
+    bill_names = re.findall(pattern, content)
+    bill_names = list(set([name.upper() for name in bill_names]))
+    return bill_names
+
+def findSameAs(aBill):
+    aBill = clean(aBill)
+    if(aBill[-1].isalpha()):
+       amnd = aBill[-1]
+       aBill = aBill.replace(amnd,'')
+       page = "https://www.nysenate.gov/legislation/bills/2023/" + aBill + "/amendment/" + amnd
+    else:
+        page = "https://www.nysenate.gov/legislation/bills/2023/" + aBill
+    pageToScrape = requests.get(page)
+    doc = BeautifulSoup(pageToScrape.text, "html.parser")
+
+    vers = doc.find_all(string="See Senate Version of this Bill:")
+    if(len(vers) != 0):
+        branch = vers[0].parent.parent
+        sBill = branch.find("a")
+        sBill = clean(sBill.text)
+        return(sBill)
+
+def process(emails, csv):
+    allEdits = [] # List of list of sBills
+    emailNames = []
+    for filename in os.listdir(emails):
+        if filename.endswith(".eml"):
+            inputFilePath = os.path.join(emails, filename)
+            billNames = findBillNames(inputFilePath)
+            editedBills = [] # List of sBills
+            for bill in billNames:
+                if bill[0] == 'A':
+                    editedBills.append(findSameAs(bill))
+                else:
+                    editedBills.append(clean(bill))
+            editedBills = str(list(set(editedBills))).replace(',','')
+            allEdits.append(editedBills)
+            emailNames.append({filename})
+            
+    with open(csv, 'w') as file:
+        file.write("Email name,Bills\n")
+        for i in range(len(allEdits)):
+            line = emailNames[i],str(allEdits[i])
+            line = clean2(str(line))
+            file.write(str(line))
+            file.write("\n")
+
+if __name__ == "__main__":
+    emails = "path/to/email/folder" # Replace with path to folder of all downloaded emails
+    csv = "path/to/output/file" # Replace with path to output txt file
+    process(emails,csv)
+    print("done")
+            </code>
+        </pre>
+        <ul class="coollinkz">
+            <li>
+                <a href="programming.html">← back to programming</a>
+            </li>
+        </ul>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/xt256.min.css">
+        <script>
+            document.addEventListener('DOMContentLoaded', (event) => {
+                hljs.highlightAll();
+            });
+        </script>
+    </body>
+</html>

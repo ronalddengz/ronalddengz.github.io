@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" /> 
+        <title>common app helper</title>
+        <link rel="stylesheet" href="main.css">
+        <style>
+            .rainbowtext {
+                background-image: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+                background-clip: text;
+                -webkit-background-clip: text;
+                color: transparent;
+                animation: rainbowAnimation 5s linear infinite;
+                display: inline;
+            }
+            @keyframes rainbowAnimation {
+                0% {
+                    background-position: 0% 50%;
+                }
+                100% {
+                    background-position: 100% 50%;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Common App Activities List Helper</h1>
+        <p>fitting your common app activities descriptions into 150 characters can be tricky</p>
+        <p>this program <span class="rainbowtext"><i>magically</i></span> shortens the activity descriptions in your activities list</p>
+        <label for="inputText">Activity description:</label>
+        <input type="text" id="inputText">
+        <button onclick="vowelAnnihilator()">ANNIHILATE</button>
+        <p id="output"></p>
+        <script>
+            function vowelAnnihilator() {
+                const input = document.getElementById("inputText").value;
+                const words = input.split(" ");
+                let output = "";
+                for (let word of words) {
+                    const modifiedWord = word.charAt(0) + word.slice(1).replace(/[aeiouAEIOU]/g, "");
+                    const finalWord = modifiedWord.replace(/and/g, "&");
+                    output += finalWord + " ";
+                }
+                document.getElementById("output").textContent = output.trim();
+            }
+        </script>
+        <ul class="coollinkz">
+            <li>
+                <a href="things.html">← back to things</a>
+            </li>
+        </ul>
+    </body>
+</html>
