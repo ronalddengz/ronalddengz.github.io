@@ -41,10 +41,10 @@ h2 {
 }
 
 html {
-    cursor: url('stuff/cursor.png') 4 12, default;
+    cursor: url('stuff/cursor.png'), default;
     
 }
 
 a, button, [role="button"], input[type="submit"], input[type="button"], .clickable {
-    cursor: url('stuff/pointer.png') 4 12, pointer;
+    cursor: url('stuff/pointer.png'), pointer;
 }
