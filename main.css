@@ -1,11 +1,19 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
 body {
     background-color: black;
     color: white;
     font-family: 'Times New Roman', sans-serif;
     text-align: left;
     font-size: 24px;
-    min-height: 100vh;
+    min-height: 100%;
     padding-bottom: 20px;
+    display: flex;
+    flex-direction: column;
 }
 
 h1 {
@@ -14,6 +22,7 @@ h1 {
     font-weight: bold;
     color: #f2eecb;
 }
+
 h2 {
     display: block;
     font-size: 24px;
