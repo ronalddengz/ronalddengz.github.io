@@ -47,8 +47,3 @@ html {
 a, button, [role="button"], input[type="submit"], input[type="button"], .clickable {
     cursor: url('stuff/pointer.png'), pointer;
 }
-.custom-cursor {
-  position: fixed;
-  pointer-events: none;
-  z-index: 9999;
-}
