@@ -1,9 +1,238 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <title>patrick</title>
-        <link rel="stylesheet" href="main.css">
-    </head>
-    <body></body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PATRICK</title>
+    <link rel="stylesheet" href="main.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #000;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            font-size: 16px;
+        }
+        header {
+            padding: 2rem;
+            text-align: center;
+        }
+        h1 {
+            font-size: 3rem;
+            letter-spacing: 0.9rem;
+            margin-bottom: 0;
+        }
+        nav {
+            margin-top: 1rem;
+        }
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 1rem;
+            font-size: 1.2rem;
+            transition: opacity 0.3s;
+        }
+        nav a:hover {
+            opacity: 0.7;
+        }
+        main {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 2rem;
+        }
+        .art-piece {
+            position: relative;
+            overflow: hidden;
+            aspect-ratio: 1;
+        }
+        .art-piece img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+        .art-piece:hover img {
+            transform: scale(1.05);
+        }
+        .art-piece .info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 1rem;
+            transform: translateY(100%);
+            transition: transform 0.3s;
+        }
+        .art-piece:hover .info {
+            transform: translateY(0);
+        }
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background-color: #111;
+        }
+        .summary {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            text-align: center;
+            border-top: 1px solid #333;
+            border-bottom: 1px solid #333;
+        }
+        .summary h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        .summary p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>PATRICK</h1>
+    </header>
+    <section class="summary" id="about">
+        <p>
+            <i>What doth man?</i>
+            <br>
+            Such a question has perplexed physcians, anthropologists, and sociologists alike for the past four and a half millenia.
+            I sought to tackle this forlorn inquiry myself and in my studies of lines, colors, and the like, I have stumbled upon a form
+            which best depicts the state of, or preception of from others around it, man.
+            <br>
+            Question no more <i>"What doth man?"</i> any longer, for I have seen the face man and I have drawn him. 
+            I present to you, dear viewer, a collection of a selection of 16 portraitures depicting man and what man doth. 
+            <br>
+            <br>
+            Behold!
+        </p>
+    </section>
+    <main id="gallery">
+        <div class="art-piece">
+            <img src="patrick/1.jpg" alt="Feliciano">
+            <div class="info">
+                <h3>Feliciano</h3>
+                <p>Ink on paper, 2023</p>
+            </div>
+        </div>
+        <div class="art-piece">
+            <img src="patrick/2.jpg" alt="The View from Allt Coir' a Mhadaidh">
+            <div class="info">
+                <h3>The View from Allt Coir' a Mhadaidh</h3>
+                <p>Ink on paper, 2023</p>
+            </div>
+        </div>
+        <div class="art-piece">
+            <img src="patrick/3.jpg" alt="Untitled">
+            <div class="info">
+                <h3>Untitled</h3>
+                <p>Ink on paper, 2023</p>
+            </div>
+        </div>
+        <div class="art-piece">
+            <img src="patrick/4.jpg" alt="Higher Dimentionality">
+            <div class="info">
+                <h3>Higher Dimentionality</h3>
+                <p>Ink on paper, 2024</p>
+            </div>
+        </div>
+        <div class="art-piece">
+            <img src="patrick/5.png" alt="Barn Study">
+            <div class="info">
+                <h3>Barn Study</h3>
+                <p>Ink on paper, 2024</p>
+            </div>
+        </div>
+        <div class="art-piece">
+            <img src="patrick/6.jpg" alt="Groucho">
+            <div class="info">
+                <h3>Groucho</h3>
+                <p>Ink on paper, 2024</p>
+            </div>
+        </div>
+        <div class="art-piece">
+            <img src="patrick/7.png" alt="Lennon">
+            <div class="info">
+                <h3>Lennon</h3>
+                <p>Ink on paper, 2024</p>
+            </div>
+        </div>
+        <div class="art-piece">
+            <img src="patrick/8.jpg" alt="Grimace">
+            <div class="info">
+                <h3>Grimance</h3>
+                <p>Ink on paper, 2024</p>
+            </div>
+        </div>
+        <div class="art-piece">
+            <img src="patrick/9.jpg" alt="Sun Jing">
+            <div class="info">
+                <h3>Sun Jing</h3>
+                <p>Ink on paper, 2024</p>
+            </div>
+        </div>
+        <div class="art-piece">
+            <img src="patrick/10.jpg" alt="Id">
+            <div class="info">
+                <h3>Id</h3>
+                <p>Ink on paper, 2024</p>
+            </div>
+        </div>
+        <div class="art-piece">
+            <img src="patrick/11.jpg" alt="Bullpen">
+            <div class="info">
+                <h3>Bullpen</h3>
+                <p>Ink on paper, 2024</p>
+            </div>
+        </div>
+        <div class="art-piece">
+            <img src="patrick/12.jpg" alt="Form Study 1">
+            <div class="info">
+                <h3>Form Study 1</h3>
+                <p>Ink on paper, 2024</p>
+            </div>
+        </div>
+        <div class="art-piece">
+            <img src="patrick/13.jpg" alt="Form Study 2">
+            <div class="info">
+                <h3>Form Study 2</h3>
+                <p>Ink on paper, 2024</p>
+            </div>
+        </div>
+        <div class="art-piece">
+            <img src="patrick/14.jpg" alt="Wunderkind">
+            <div class="info">
+                <h3>Wunderkind</h3>
+                <p>Ink on paper, 2024</p>
+            </div>
+        </div>
+        <div class="art-piece">
+            <img src="patrick/15.jpg" alt="Form Study 3">
+            <div class="info">
+                <h3>Form Study 3</h3>
+                <p>Ink on paper, 2024</p>
+            </div>
+        </div>
+        <div class="art-piece">
+            <img src="patrick/16.jpg" alt="Gesamtkunstwerk">
+            <div class="info">
+                <h3>Gesamtkunstwerk</h3>
+                <p>Ink on paper, 2024</p>
+            </div>
+        </div>
+    </main>
+    <br>
+    <br>
+    <ul class="coollinkz">
+        <li><a href="art.html">← back to art</a></li>
+    </ul>
+    <footer>
+        <p>&copy; 2024 Ronald Deng. IT'S SATIRE, FOOL</p>
+    </footer>
+</body>
 </html>
