@@ -4,8 +4,10 @@ body {
     font-family: 'Times New Roman', sans-serif;
     text-align: left;
     font-size: 24px;
+    min-height: 100vh;
+    padding-bottom: 20px;
 }
-            
+
 h1 {
     display: block;
     font-size: 32px;
@@ -17,7 +19,7 @@ h2 {
     font-size: 24px;
     font-weight: bold;
 }
-            
+
 .coollinkz {
     list-style: none;
     padding: 0;
@@ -35,16 +37,18 @@ h2 {
 .coollinkz a:hover {
     border-bottom: 1px solid white;
 }
-
 .container {
   overflow: auto;
 }
-
 html {
     cursor: url('stuff/cursor.png'), default !important;
-    
-}
 
+}
 a, button, [role="button"], input[type="submit"], input[type="button"], .clickable {
     cursor: url('stuff/pointer.png'), pointer;
+}
+.custom-cursor {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
 }
