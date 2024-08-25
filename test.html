@@ -3,17 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mock Williams College Login</title>
+    <title>Mock Williams College Portal</title>
     <style>
         body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; }
-        input, button { display: block; margin: 10px 0; padding: 5px; width: 100%; }
-        #verification, #mainContent { display: none; }
+        button, a { display: block; margin: 10px 0; padding: 5px; width: 100%; }
         .unclickable { opacity: 0.5; pointer-events: none; }
     </style>
 </head>
 <body>
-    <h1>Mock Williams College Login</h1>
-    
+    <h1>Mock Williams College Portal</h1>
+
     <div id="mainContent">
         <h2>Main Portal</h2>
         <button id="win0groupletPTNUI_LAND_REC_GROUPLET$2">Student Records</button>
@@ -36,7 +35,7 @@
             'CO_EMPLOYEE_SELF_SERVICE': true,
             'HCCC_ENROLLMENT': true,
             'peClassRegistration': true,
-            'WMS_M166_WK_SELECT$0': false,
+            'WMS_M166_WK_SELECT$0': true,
             'WMS_M166_WK_SELECT$1': true,
             'WMS_M166_WK_SELECT$2': true
         };
@@ -50,25 +49,6 @@
                 }
             }
         }
-
-        document.getElementById('identifierNext').addEventListener('click', function() {
-            document.getElementById('input28').style.display = 'block';
-        });
-
-        document.querySelectorAll('.button').forEach(button => {
-            button.addEventListener('click', function() {
-                if (this.previousElementSibling.id === 'input60') {
-                    document.getElementById('verification').style.display = 'block';
-                }
-            });
-        });
-
-        document.querySelectorAll('.authenticator-row button').forEach(button => {
-            button.addEventListener('click', function() {
-                document.getElementById('verification').style.display = 'none';
-                document.getElementById('mainContent').style.display = 'block';
-            });
-        });
     </script>
 </body>
 </html>
