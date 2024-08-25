@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mock Williams College Login</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; }
+        input, button { display: block; margin: 10px 0; padding: 5px; width: 100%; }
+        #verification, #mainContent { display: none; }
+        .unclickable { opacity: 0.5; pointer-events: none; }
+        #controlPanel { margin-top: 20px; padding: 10px; background-color: #f0f0f0; }
+        #clickLog { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Mock Williams College Login</h1>
+    
+    <div id="login">
+        <input type="email" id="identifierId" placeholder="Email">
+        <button id="identifierNext">Next</button>
+        
+        <input type="text" id="input28" placeholder="Username">
+        <button class="button">Next</button>
+        
+        <input type="password" id="input60" placeholder="Password">
+        <button class="button">Login</button>
+    </div>
+
+    <div id="verification">
+        <h2>Verification Method</h2>
+        <div class="authenticator-row">
+            <button>Verify with Code</button>
+        </div>
+        <div class="authenticator-row">
+            <button>Verify with Push Notification</button>
+        </div>
+    </div>
+
+    <div id="mainContent">
+        <h2>Main Portal</h2>
+        <button id="win0groupletPTNUI_LAND_REC_GROUPLET$2">Student Records</button>
+        <button id="pthnavbca_PORTAL_ROOT_OBJECT">Portal Root</button>
+        <button id="CO_EMPLOYEE_SELF_SERVICE">Self Service</button>
+        <button id="HCCC_ENROLLMENT">Enrollment</button>
+        <a href="#" id="peClassRegistration">PE Class Registration</a>
+        
+        <h3>Class Selection</h3>
+        <button id="WMS_M166_WK_SELECT$0">Class 1</button>
+        <button id="WMS_M166_WK_SELECT$1">Class 2</button>
+        <button id="WMS_M166_WK_SELECT$2">Class 3</button>
+    </div>
+
+    <div id="controlPanel">
+        <h3>Control Panel</h3>
+        <select id="buttonSelector"></select>
+        <button onclick="toggleButton()">Toggle Clickable</button>
+    </div>
+
+    <div id="clickLog">
+        <h3>Click Log</h3>
+        <ul id="clickLogList"></ul>
+    </div>
+
+    <script>
+        // Existing script
+        document.getElementById('identifierNext').addEventListener('click', function() {
+            document.getElementById('input28').style.display = 'block';
+        });
+
+        document.querySelectorAll('.button').forEach(button => {
+            button.addEventListener('click', function() {
+                if (this.previousElementSibling.id === 'input60') {
+                    document.getElementById('verification').style.display = 'block';
+                }
+            });
+        });
+
+        document.querySelectorAll('.authenticator-row button').forEach(button => {
+            button.addEventListener('click', function() {
+                document.getElementById('verification').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+            });
+        });
+
+        // New script for button control and click logging
+        const buttons = document.querySelectorAll('button, a');
+        const buttonSelector = document.getElementById('buttonSelector');
+        const clickLogList = document.getElementById('clickLogList');
+
+        // Populate button selector
+        buttons.forEach((button, index) => {
+            const option = document.createElement('option');
+            option.value = index;
+            option.textContent = button.textContent || button.id;
+            buttonSelector.appendChild(option);
+        });
+
+        // Function to toggle button clickability
+        function toggleButton() {
+            const selectedButton = buttons[buttonSelector.value];
+            selectedButton.classList.toggle('unclickable');
+        }
+
+        // Add click event listeners to all buttons
+        buttons.forEach(button => {
+            button.addEventListener('click', function(event) {
+                const logItem = document.createElement('li');
+                logItem.textContent = `${this.textContent || this.id} was clicked`;
+                clickLogList.appendChild(logItem);
+                
+                // Prevent default action for links
+                if (this.tagName === 'A') {
+                    event.preventDefault();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
