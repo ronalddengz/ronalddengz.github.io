@@ -9,8 +9,6 @@
         input, button { display: block; margin: 10px 0; padding: 5px; width: 100%; }
         #verification, #mainContent { display: none; }
         .unclickable { opacity: 0.5; pointer-events: none; }
-        #controlPanel { margin-top: 20px; padding: 10px; background-color: #f0f0f0; }
-        #clickLog { margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -51,19 +49,30 @@
         <button id="WMS_M166_WK_SELECT$2">Class 3</button>
     </div>
 
-    <div id="controlPanel">
-        <h3>Control Panel</h3>
-        <select id="buttonSelector"></select>
-        <button onclick="toggleButton()">Toggle Clickable</button>
-    </div>
-
-    <div id="clickLog">
-        <h3>Click Log</h3>
-        <ul id="clickLogList"></ul>
-    </div>
-
     <script>
-        // Existing script
+        // Clickability control variables
+        var clickableButtons = {
+            'identifierNext': true,
+            'win0groupletPTNUI_LAND_REC_GROUPLET$2': true,
+            'pthnavbca_PORTAL_ROOT_OBJECT': true,
+            'CO_EMPLOYEE_SELF_SERVICE': true,
+            'HCCC_ENROLLMENT': true,
+            'peClassRegistration': true,
+            'WMS_M166_WK_SELECT$0': false,
+            'WMS_M166_WK_SELECT$1': true,
+            'WMS_M166_WK_SELECT$2': true
+        };
+
+        // Apply clickability settings
+        for (let id in clickableButtons) {
+            let element = document.getElementById(id);
+            if (element) {
+                if (!clickableButtons[id]) {
+                    element.classList.add('unclickable');
+                }
+            }
+        }
+
         document.getElementById('identifierNext').addEventListener('click', function() {
             document.getElementById('input28').style.display = 'block';
         });
@@ -80,39 +89,6 @@
             button.addEventListener('click', function() {
                 document.getElementById('verification').style.display = 'none';
                 document.getElementById('mainContent').style.display = 'block';
-            });
-        });
-
-        // New script for button control and click logging
-        const buttons = document.querySelectorAll('button, a');
-        const buttonSelector = document.getElementById('buttonSelector');
-        const clickLogList = document.getElementById('clickLogList');
-
-        // Populate button selector
-        buttons.forEach((button, index) => {
-            const option = document.createElement('option');
-            option.value = index;
-            option.textContent = button.textContent || button.id;
-            buttonSelector.appendChild(option);
-        });
-
-        // Function to toggle button clickability
-        function toggleButton() {
-            const selectedButton = buttons[buttonSelector.value];
-            selectedButton.classList.toggle('unclickable');
-        }
-
-        // Add click event listeners to all buttons
-        buttons.forEach(button => {
-            button.addEventListener('click', function(event) {
-                const logItem = document.createElement('li');
-                logItem.textContent = `${this.textContent || this.id} was clicked`;
-                clickLogList.appendChild(logItem);
-                
-                // Prevent default action for links
-                if (this.tagName === 'A') {
-                    event.preventDefault();
-                }
             });
         });
     </script>
