@@ -4,28 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="P7UaRCwSeo4SyrMtvBaGWBD9R-fXgHiLO88dV5yHoRw">
+    <link rel="stylesheet" href="main.css">
     <title>da ballpit</title>
     <style>
-        body {
-            background-color: #000;
-            color: #fff;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
         a {
             text-decoration: none;
-            color: white;
+            color: white
         }
-        .link-container {
-            display: inline-block;
-        }
-        .link-container:hover {
+        a:hover {
             border-bottom: 1px solid white;
         }
+        
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+        }
+
         .clickable-area {
             position: absolute;
             top: 50px;
@@ -33,27 +28,28 @@
             width: 120px;
             height: 110px;
             cursor: pointer;
+            background-color: transparent;
         }
+        
         .rainbow-text {
             display: inline-block;
+            color: transparent;
         }
+
         .rainbow-text span {
             display: inline-block;
         }
-        .rainbow-text span:nth-child(10n+1) { color: #ff0000; }
-        .rainbow-text span:nth-child(10n+2) { color: #0000ff; }
-        .rainbow-text span:nth-child(10n+3) { color: #ff0000; }
-        .rainbow-text span:nth-child(10n+4) { color: #ffff00; }
-        .rainbow-text span:nth-child(10n+5) { color: #ff00ff; }
-        .rainbow-text span:nth-child(10n+6) { color: #ff0000; }
-        .rainbow-text span:nth-child(10n+7) { color: #00ff00; }
-        .rainbow-text span:nth-child(10n+8) { color: #ff8000; }
-        .rainbow-text span:nth-child(10n+9) { color: #ff0000; }
-        .rainbow-text span:nth-child(10n) { color: #8000ff; }
-        .coollinkz {
-            list-style-type: none;
-            padding-left: 0;
-        }
+
+        .rainbow-text span:nth-child(1) { color: #ff0000; }
+        .rainbow-text span:nth-child(2) { color: #0000ff; }
+        .rainbow-text span:nth-child(3) { color: #ff0000; }
+        .rainbow-text span:nth-child(4) { color: #ffff00; }
+        .rainbow-text span:nth-child(5) { color: #ff00ff; }
+        .rainbow-text span:nth-child(6) { color: #ff0000; }
+        .rainbow-text span:nth-child(7) { color: #00ff00; }
+        .rainbow-text span:nth-child(8) { color: #ff8000; }
+        .rainbow-text span:nth-child(9) { color: #ff0000; }
+        .rainbow-text span:nth-child(10) { color: #8000ff; }        
     </style>
 </head>
 <body>
