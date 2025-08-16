@@ -1,0 +1,135 @@
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../../main.css">
+  <title>images</title>
+  
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #ffffff;
+      color: #000000;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      height: 100vh;
+    }
+
+    header {
+      width: 100%;
+      padding: 2rem 0 0.5rem 0;
+      text-align: center;
+    }
+    
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      text-align: center;
+      padding: 2rem;
+      font-size: 1.2rem;
+    }
+
+    h2 {
+        max-width: 800px;
+        font-size: 1.8rem;
+        margin: 0 auto 3rem auto;
+        font-weight: 300;
+        color: #333;
+    }
+
+    .image-gallery {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+      justify-items: center;
+    }
+
+    .image-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 320px;
+    }
+
+    .image-item img {
+      height: 400px;
+      object-fit: cover;
+      border: 1px solid #eee;
+      display: block;
+    }
+
+    .image-caption h3 {
+      margin: 0.8rem 0 0.3rem;
+      font-size: 1.5rem;
+      font-weight: 400;
+      text-transform: lowercase;
+      color: #333;
+    }
+
+    .image-caption p {
+      margin: 0;
+      font-size: 0.85rem;
+      font-weight: 300;
+      color: #666;
+      line-height: 1.4;
+    }
+
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="header">
+      <h1>Ronald Deng</h1>
+    </div>
+    <br>
+    <nav class="main-nav">
+        <a href="/index.html">Home</a>
+        <a href="/portfolio.html">Portfolio</a>
+        <a href="/about.html">About</a>
+        <a href="/contact.html">Contact</a>
+        <a href="/personal-info.html">Personal Info</a>
+    </nav>
+  </header>
+  <br>
+  <br>
+  <main>
+    <h2>I can use Blender and this is the proof</h2>
+    
+    <div class="image-gallery">
+      <div class="image-item">
+        <img src="museum.png" alt="Museum render">
+        <div class="image-caption">
+          <h3>vases</h3>
+          <p>2021</p>
+        </div>
+      </div>
+      
+      <div class="image-item">
+        <img src="adventure.png" alt="Adventure scene">
+        <div class="image-caption">
+          <h3>anti-cereal</h3>
+          <p>2022</p>
+        </div>
+      </div>
+      
+      <div class="image-item">
+        <img src="cereal3.png" alt="Product render">
+        <div class="image-caption">
+          <h3>grand adventure</h3>
+          <p>2022</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <h3>&copy; 2025 Ronald Deng</h3>
+  </footer>
+</body>
