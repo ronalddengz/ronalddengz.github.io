@@ -1,0 +1,69 @@
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="main.css">
+  <title>personal information</title>
+  
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #ffffff;
+      color: #000000;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      height: 100vh;
+    }
+
+    header {
+      width: 100%;
+      padding: 2rem 0 0.5rem 0;
+      text-align: center;
+    }
+    
+    main {
+      flex: 1;
+      text-align: center;  
+      padding: 2rem;
+      font-size: 1.2rem;
+      opacity: 0.8;
+    }
+
+    p {
+        font-size: 1.4rem;
+        max-width: 800px;
+        margin: 1.2em auto;
+        margin-top: -0.5em;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="header">
+      <h1>Ronald Deng</h1>
+    </div>
+    <br>
+    <nav class="main-nav">
+        <a href="/index.html">Home</a>
+        <a href="/portfolio.html">Portfolio</a>
+        <a href="/about.html">About</a>
+        <a href="/contact.html">Contact</a>
+        <a href="/personal-info.html">Personal Info</a>
+    </nav>
+  </header>
+  <br>
+  <br>
+  <main>
+    <p>ronalddengz.github.io is funded entirely off of the sales of your personal information to advertisers, data brokers, governments, and other interested parties. Please enter all of your personal information below:</p>
+    <textarea placeholder="Enter your personal information here." rows="6" style="width: 100%; max-width: 600px; margin: 1.5em auto; display: block; font-size: 1.1rem; padding: 0.8em; border-radius: 8px; border: 1.5px solid #bbb; background: #fafafa;"></textarea>
+    <button class="clickable btn" type="submit" style="margin-top: -1em;">Submit</button>
+  </main>
+
+  <footer>
+    <h3>&copy; 2025 Ronald Deng</h3>
+  </footer>
+</body>

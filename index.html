@@ -1,0 +1,85 @@
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="main.css">
+  <title>welcome to my website</title>
+  
+  <style>
+    body, a, button, [role="button"], input[type="submit"], input[type="button"], .clickable {
+      cursor: auto !important;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #ffffff;
+      color: #000000;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      height: 100vh;
+    }
+
+    header {
+      width: 100%;
+      padding: 2rem 0 0.5rem 0;
+      text-align: center;
+    }
+    
+    main {
+      flex: 1;
+      text-align: center;  
+      padding: 2rem;
+      font-size: 1.2rem;
+      opacity: 0.8;
+    }
+    .scroll-animate {
+      color: #222;
+    }
+    strong {
+      color: #e63946;
+      font-weight: bold;
+    }
+
+    h2 {
+      font-size: 2.4rem;
+      margin-top: -0.4em;
+    }
+
+    p {
+      font-size: 1rem;
+    }
+
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="header">
+      <h1>Ronald Deng</h1>
+    </div>
+    <br>
+    <nav class="main-nav">
+      <a href="/index.html">Home</a>
+      <a href="/portfolio.html">Portfolio</a>
+      <a href="/about.html">About</a>
+      <a href="/contact.html">Contact</a>
+      <a href="/personal-info.html">Personal Info</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2>my name is Ronald Deng and this is my website.</h2>
+    <div style="width:100%; display:flex; justify-content:center; align-items:center; margin-top:-4em;">
+      <img id="floating-head" src="images/head/head-center.png" style="width:400px; height:auto; pointer-events:none; transition:filter 0.1s; display:block; filter: brightness(1) contrast(1.2) opacity(1) saturate(1.4);">
+    </div>
+  </main>
+
+  <footer>
+    <h3>&copy; 2025 Ronald Deng</h3>
+  </footer>
+  <script src="floating-head.js"></script>
+  <script src="scroll-animate.js"></script>
+</body>

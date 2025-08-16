@@ -1,0 +1,149 @@
+@font-face {
+    font-family: 'Josefin Sans';
+    src: url('/fonts/JosefinSans-VariableFont_wght.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'DustyCircus';
+    src: url('/fonts/DustyCircus.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+.btn {
+  margin: 0.7em auto;
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 1.2rem;
+  padding: 0.7em 2em;
+  border-radius: 8px;
+  border: none;
+  background: none;
+  color: #222;
+  display: block;
+  transition: background 0.2s, color 0.2s;
+}
+.btn:hover {
+  color: #e63946;
+}
+
+
+.main-nav {
+  position: sticky;
+  top: 0;
+  display: flex;
+  gap: 1em;
+  justify-content: center;
+  margin-bottom: 0;
+  border-bottom: 1px solid #333;
+  margin-top: -1em;
+}
+.main-nav a {
+  color: #222;
+  text-decoration: none;
+  font-family: 'Josefin Sans', sans-serif;
+  font-weight: bold;
+  font-size: 1.2rem;
+  padding: 0.5em 1em;
+  border-radius: 4px;
+  transition: background 0.2s, color 0.2s;
+}
+.main-nav a:hover {
+  color: #e63946;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: black;
+  color: white;
+  font-family: 'Josefin Sans', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  height: 100vh;
+  text-align: left;
+  font-size: 24px;
+  padding-bottom: 20px;
+  cursor: url('images/cursor.png'), default;
+}
+
+a, button, [role="button"], input[type="submit"], input[type="button"], .clickable {
+    cursor: url('images/pointer.png'), pointer;
+}
+
+h1 {
+      margin: 0;
+      font-size: 5rem;
+      letter-spacing: 2px;
+      font-family: 'DustyCircus';
+      margin-bottom: 0;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+h2 {
+    display: block;
+    font-size: 24px;
+    font-weight: bold;
+    font-family: 'Josefin Sans', sans-serif;
+    margin-bottom: 2em;
+    margin-top: -1em;
+}
+
+h3 {
+    display: block;
+    font-size: 14px;
+    font-family: 'Josefin Sans', sans-serif;
+    margin-bottom: 1em;
+    margin-top: -0.4em;
+}
+
+p {
+    margin: 1em 0 0 0;
+    font-size: 18px;
+    font-family: 'Josefin Sans', sans-serif;
+}
+
+html {
+    height: 100%; 
+}
+
+.scroll-animate {
+  opacity: 0;
+  transform: translateY(-70px);
+  transition: opacity 0.5s ease, transform 0.8s ease;
+
+}
+.scroll-animate.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+.sticky-container {
+  position: relative;
+  height: 200vh; /* This ensures enough space for scrolling effect */
+}
+
+.sticky-section {
+  position: sticky;
+  top: 0;
+  height: 100vh; /* Full viewport height */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.header {
+  z-index: 99;
+  position: sticky;
+  top: 0;
+  background: #fff;
+  padding: 0;
+  width: 100%;
+}
