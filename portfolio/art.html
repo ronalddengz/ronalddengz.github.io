@@ -1,0 +1,81 @@
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../main.css">
+  <title>art</title>
+  
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #ffffff;
+      color: #000000;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      height: 100vh;
+    }
+
+    header {
+      width: 100%;
+      padding: 2rem 0 0.5rem 0;
+      text-align: center;
+    }
+    
+    main {
+      flex: 1;
+      text-align: center;  
+      padding: 2rem;
+      font-size: 1.2rem;
+      opacity: 0.8;
+    }
+
+    h2 {
+        max-width: 800px;
+        font-size: 2rem;
+        margin-top: 0em;
+        margin-bottom: 0.3em;
+    }
+
+    p {
+        font-size: 2rem;
+        max-width: 800px;
+        margin: 1.2em auto;
+    }
+
+    .btn {
+        font-size: 2rem;
+        margin: -0.2em auto;
+    }
+
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="header">
+      <h1>Ronald Deng</h1>
+    </div>
+    <br>
+    <nav class="main-nav">
+        <a href="/index.html">Home</a>
+        <a href="/portfolio.html">Portfolio</a>
+        <a href="/about.html">About</a>
+        <a href="/contact.html">Contact</a>
+        <a href="/personal-info.html">Personal Info</a>
+    </nav>
+  </header>
+  <br>
+  <br>
+  <main>
+    <button class="clickable btn" onclick="window.location.href='./portfolio_files/blender.html'">Images</button>
+    <button class="clickable btn" onclick="window.location.href='./portfolio_files/films.html'">Short Films</button>
+    <button class="clickable btn" onclick="window.location.href='./portfolio_files/patrick.html'">Patrick</button>
+  </main>
+
+  <footer>
+    <h3>&copy; 2025 Ronald Deng</h3>
+  </footer>
+</body>
