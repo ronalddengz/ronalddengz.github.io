@@ -1,3 +1,10 @@
+.container {
+  width: 100%;     /* fills screen */
+  max-width: 1200px; /* prevents it from stretching too wide on desktop */
+  margin: 0 auto;  /* centers on larger screens */
+}
+
+
 @font-face {
     font-family: 'Josefin Sans';
     src: url('/fonts/JosefinSans-VariableFont_wght.ttf') format('truetype');
