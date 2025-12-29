@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Audio Visualizer</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { overflow: hidden; background: #000; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    
+    #visualizer-container { position: fixed; inset: 0; z-index: 1; }
+    
+    .back-link {
+      position: fixed; top: 20px; left: 20px; z-index: 10;
+      color: rgba(255,255,255,0.4); text-decoration: none; font-size: 13px;
+      transition: color 0.3s;
+    }
+    .back-link:hover { color: #fff; }
+    
+    .controls {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      z-index: 10; display: flex; flex-direction: column; align-items: center; gap: 12px;
+    }
+    
+    .main-row { display: flex; align-items: center; gap: 16px; }
+    
+    .play-btn {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: transparent; border: 1px solid rgba(255,255,255,0.3);
+      color: #fff; font-size: 14px; cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .play-btn:hover { border-color: #fff; transform: scale(1.05); }
+    
+    .progress-container { display: flex; align-items: center; gap: 8px; }
+    
+    .progress-bar {
+      width: 200px; height: 6px; background: rgba(255,255,255,0.15);
+      border-radius: 3px; cursor: pointer; position: relative;
+    }
+    .progress-fill {
+      height: 100%; background: rgba(255,255,255,0.6); width: 0%;
+      border-radius: 3px; transition: width 0.1s linear;
+    }
+    
+    .time { color: rgba(255,255,255,0.4); font-size: 11px; font-family: monospace; min-width: 70px; }
+    
+    .volume-slider {
+      -webkit-appearance: none; width: 60px; height: 2px;
+      background: rgba(255,255,255,0.2); border-radius: 1px; outline: none;
+    }
+    .volume-slider::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 10px; height: 10px;
+      border-radius: 50%; background: rgba(255,255,255,0.6); cursor: pointer;
+    }
+    
+    .now-playing {
+      color: rgba(255,255,255,0.3); font-size: 11px; letter-spacing: 0.5px;
+    }
+    
+    .start-overlay {
+      position: fixed; inset: 0; z-index: 100;
+      background: rgba(0,0,0,0.9); display: flex;
+      flex-direction: column; align-items: center; justify-content: center;
+      cursor: pointer; transition: opacity 0.3s;
+    }
+    .start-overlay.hidden { opacity: 0; pointer-events: none; }
+    .start-overlay h2 {
+      color: #fff; font-size: 1.5rem; margin-bottom: 8px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    .start-overlay p {
+      color: rgba(255,255,255,0.5); font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="start-overlay" id="startOverlay" style="display: none;">
+    <h2 id="overlayTitle"></h2>
+    <p>click anywhere to play</p>
+  </div>
+  
+  <a href="portfolio/music.html" class="back-link">←</a>
+
+  <div id="visualizer-container"></div>
+
+  <div class="controls">
+    <div class="now-playing" id="nowPlaying"></div>
+    <div class="main-row">
+      <button class="play-btn" id="playBtn">▶</button>
+      <div class="progress-container">
+        <div class="progress-bar" id="progressBar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <span class="time"><span id="currentTime">0:00</span> / <span id="duration">0:00</span></span>
+      </div>
+      <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.01" value="0.7">
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    const tracks = [
+      { name: 'Hamilton', file: 'portfolio/portfolio_files/hamilton.mp3' },
+      { name: 'Integrated Chinese', file: 'portfolio/portfolio_files/integratedchinese.mp3' },
+      { name: 'Sand Counter', file: 'portfolio/portfolio_files/sand counter.mp3' },
+      { name: 'Respite', file: 'portfolio/portfolio_files/respite.mp3' },
+      { name: 'Kruskal', file: 'portfolio/portfolio_files/kruskal.mp3' },
+      { name: 'Triangle Music', file: 'portfolio/portfolio_files/trianglemusic.mp3' }
+    ];
+
+    let audioContext, analyser, source, dataArray, audio;
+    let isPlaying = false;
+    let currentTrack = null;
+    let scene, camera, renderer;
+    let particles;
+
+    function initAudio() {
+      audio = new Audio();
+      audio.crossOrigin = 'anonymous';
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      analyser = audioContext.createAnalyser();
+      analyser.fftSize = 256;
+      source = audioContext.createMediaElementSource(audio);
+      source.connect(analyser);
+      analyser.connect(audioContext.destination);
+      dataArray = new Uint8Array(analyser.frequencyBinCount);
+      
+      audio.addEventListener('ended', () => {
+        isPlaying = false;
+        document.getElementById('playBtn').textContent = '▶';
+      });
+      audio.addEventListener('timeupdate', updateProgress);
+      audio.addEventListener('loadedmetadata', updateDuration);
+    }
+
+    function initThree() {
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.z = 30;
+      
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      document.getElementById('visualizer-container').appendChild(renderer.domElement);
+
+      createParticles();
+      particles.visible = true;
+
+      const light1 = new THREE.PointLight(0xff6b6b, 0.8, 100);
+      light1.position.set(20, 20, 20);
+      scene.add(light1);
+      const light2 = new THREE.PointLight(0x4ecdc4, 0.8, 100);
+      light2.position.set(-20, -20, 20);
+      scene.add(light2);
+
+      window.addEventListener('resize', onWindowResize);
+    }
+
+    function createParticles() {
+      const count = 1500;
+      const geometry = new THREE.BufferGeometry();
+      const positions = new Float32Array(count * 3);
+      const colors = new Float32Array(count * 3);
+      
+      for (let i = 0; i < count; i++) {
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.acos(Math.random() * 2 - 1);
+        const r = 8 + Math.random() * 12;
+        positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+        positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+        positions[i * 3 + 2] = r * Math.cos(phi);
+        const color = new THREE.Color().setHSL(Math.random(), 0.7, 0.6);
+        colors[i * 3] = color.r;
+        colors[i * 3 + 1] = color.g;
+        colors[i * 3 + 2] = color.b;
+      }
+      
+      geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+      
+      const material = new THREE.PointsMaterial({
+        size: 0.12,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.85
+      });
+      
+      particles = new THREE.Points(geometry, material);
+      scene.add(particles);
+    }
+
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    function updateProgress() {
+      if (audio.duration) {
+        document.getElementById('progressFill').style.width = `${(audio.currentTime / audio.duration) * 100}%`;
+        document.getElementById('currentTime').textContent = formatTime(audio.currentTime);
+      }
+    }
+
+    function updateDuration() {
+      document.getElementById('duration').textContent = formatTime(audio.duration);
+    }
+
+    function formatTime(s) {
+      const m = Math.floor(s / 60);
+      return `${m}:${Math.floor(s % 60).toString().padStart(2, '0')}`;
+    }
+
+    function loadTrack(index) {
+      currentTrack = index;
+      audio.src = tracks[index].file;
+      document.getElementById('nowPlaying').textContent = tracks[index].name;
+      document.querySelectorAll('.track-btn').forEach((btn, i) => btn.classList.toggle('active', i === index));
+    }
+
+    function togglePlay() {
+      if (currentTrack === null) loadTrack(0);
+      if (audioContext.state === 'suspended') audioContext.resume();
+      
+      if (isPlaying) {
+        audio.pause();
+        document.getElementById('playBtn').textContent = '▶';
+      } else {
+        audio.play();
+        document.getElementById('playBtn').textContent = '⏸';
+      }
+      isPlaying = !isPlaying;
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      
+      if (analyser && isPlaying) {
+        analyser.getByteFrequencyData(dataArray);
+        const avg = dataArray.reduce((a, b) => a + b) / dataArray.length / 255;
+        updateParticles(avg);
+      }
+      
+      particles.rotation.y += 0.001;
+      renderer.render(scene, camera);
+    }
+
+    function updateParticles(avg) {
+      const positions = particles.geometry.attributes.position;
+      const colors = particles.geometry.attributes.color;
+      const time = Date.now() * 0.001;
+      
+      for (let i = 0; i < positions.count; i++) {
+        const freqIndex = Math.floor((i / positions.count) * dataArray.length);
+        const freqValue = dataArray[freqIndex] / 255;
+        
+        const x = positions.getX(i), y = positions.getY(i), z = positions.getZ(i);
+        const length = Math.sqrt(x * x + y * y + z * z);
+        const target = 8 + freqValue * 14 + avg * 6;
+        const newLen = length + (target - length) * 0.08;
+        
+        positions.setX(i, (x / length) * newLen);
+        positions.setY(i, (y / length) * newLen);
+        positions.setZ(i, (z / length) * newLen);
+        
+        const hue = (freqValue + time * 0.08 + i * 0.0008) % 1;
+        const color = new THREE.Color().setHSL(hue, 0.7, 0.5 + freqValue * 0.3);
+        colors.setXYZ(i, color.r, color.g, color.b);
+      }
+      
+      positions.needsUpdate = true;
+      colors.needsUpdate = true;
+      particles.rotation.x += 0.0008;
+    }
+
+    function init() {
+      initAudio();
+      initThree();
+      
+      document.getElementById('playBtn').addEventListener('click', togglePlay);
+      document.getElementById('volumeSlider').addEventListener('input', e => audio.volume = e.target.value);
+      
+      const progressBar = document.getElementById('progressBar');
+      progressBar.addEventListener('click', e => {
+        const rect = progressBar.getBoundingClientRect();
+        const percent = (e.clientX - rect.left) / rect.width;
+        if (audio.duration) {
+          audio.currentTime = percent * audio.duration;
+        }
+      });
+      
+      document.addEventListener('keydown', e => {
+        if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
+      });
+      
+      // Check for track parameter in URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const trackParam = urlParams.get('track');
+      if (trackParam) {
+        const trackIndex = tracks.findIndex(t => 
+          t.name.toLowerCase() === trackParam.toLowerCase() ||
+          t.file.toLowerCase().includes(trackParam.toLowerCase())
+        );
+        if (trackIndex !== -1) {
+          loadTrack(trackIndex);
+          // Show overlay for user to click (browser autoplay policy)
+          const overlay = document.getElementById('startOverlay');
+          document.getElementById('overlayTitle').textContent = tracks[trackIndex].name;
+          overlay.style.display = 'flex';
+          overlay.addEventListener('click', () => {
+            overlay.classList.add('hidden');
+            setTimeout(() => overlay.style.display = 'none', 300);
+            togglePlay();
+          }, { once: true });
+        }
+      }
+      
+      animate();
+    }
+
+    init();
+  </script>
+</body>
+</html>
