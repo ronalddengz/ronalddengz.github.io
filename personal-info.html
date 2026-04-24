@@ -31,9 +31,19 @@
 
   <main>
     <p>ronalddengz.github.io is funded entirely off of the sales of your personal information to advertisers, data brokers, governments, and other interested parties. Please enter all of your personal information below:</p>
-    <textarea placeholder="Enter your personal information here." rows="6" style="width: 100%; max-width: 600px; margin: 1.5em auto; display: block; font-size: 1.1rem; padding: 0.8em; border-radius: 8px; border: 1.5px solid #bbb; background: #fafafa;"></textarea>
-    <button class="clickable btn" type="submit" style="margin-top: -1em;">Submit</button>
+    <textarea id="personal-info-input" placeholder="Enter your personal information here." rows="6" style="width: 100%; max-width: 600px; margin: 1.5em auto; display: block; font-size: 1.1rem; padding: 0.8em; border-radius: 8px; border: 1.5px solid #bbb; background: #fafafa;"></textarea>
+    <button class="clickable btn" onclick="submitInfo()" style="margin-top: -1em;">Submit</button>
   </main>
+
+  <script>
+    function submitInfo() {
+      const input = document.getElementById('personal-info-input').value;
+      if (input.trim() !== '') {
+        localStorage.setItem('personalInfoSubmission', input);
+      }
+      window.location.href = '/spreadsheet.html';
+    }
+  </script>
 
   <footer>
     <h3>&copy; 2025 Ronald Deng</h3>
