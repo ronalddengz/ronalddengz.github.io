@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   var headImg = document.getElementById('floating-head');
   if (headImg) {
     headImg.src = 'head/forward.png';
@@ -16,7 +16,14 @@ document.addEventListener('DOMContentLoaded', function() {
     topper: 'head/up2.png',
     downer: 'head/down2.png',
   };
-  document.addEventListener('mousemove', function(e) {
+
+  for (var key in headImages) {
+    if (headImages.hasOwnProperty(key)) {
+      var img = new Image();
+      img.src = headImages[key];
+    }
+  }
+  document.addEventListener('mousemove', function (e) {
     var x = e.clientX;
     var y = e.clientY;
     var w = window.innerWidth;
