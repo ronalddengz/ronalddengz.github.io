@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Generalized Gray Code Explorer</title>
+  <style>
+    :root {
+      --text: #111;
+      --muted: #666;
+      --border: #ddd;
+      --bg: #fff;
+      --accent: #000;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      line-height: 1.5;
+    }
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 0.2em;
+    }
+    p.sub {
+      color: var(--muted);
+      margin-bottom: 40px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 40px;
+      align-items: start;
+    }
+    @media (max-width: 750px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+    
+    /* Form controls */
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    label {
+      display: flex;
+      flex-direction: column;
+      font-weight: 500;
+      font-size: 0.9rem;
+      gap: 6px;
+    }
+    input[type="number"], input[type="text"], select {
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+    }
+    input:focus, select:focus { border-color: var(--accent); }
+    
+    .panel {
+      border: 1px solid var(--border);
+      padding: 16px;
+      border-radius: 4px;
+      background: #fafafa;
+    }
+    .panel h3 {
+      margin: 0 0 12px 0;
+      font-size: 0.95rem;
+      color: #333;
+    }
+    
+    /* Priority list */
+    .priority-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .priority-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: #fff;
+      cursor: grab;
+      font-size: 0.9rem;
+      user-select: none;
+    }
+    .priority-item:active { cursor: grabbing; }
+    .priority-item.over { border-color: var(--accent); }
+    .drag-handle { color: #aaa; cursor: grab; }
+    
+    button {
+      padding: 10px 16px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      width: 100%;
+    }
+    button.secondary {
+      background: #555;
+    }
+    button:hover { background: #333; }
+    
+    /* Output area */
+    .output-section {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .output-header {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      background: #fafafa;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+    }
+    .output-scroll {
+      max-height: 600px;
+      overflow-y: auto;
+      padding: 16px;
+    }
+    
+    /* Table styling for output */
+    .row {
+      display: grid;
+      grid-template-columns: 40px 100px 1fr 100px;
+      gap: 10px;
+      align-items: center;
+      padding: 6px 0;
+      font-size: 0.85rem;
+    }
+    .col-header {
+      font-weight: 600;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+      margin-bottom: 8px;
+    }
+    .row-idx { color: var(--muted); }
+    .row-name { font-weight: 500; }
+    .row-bits, .row-interval { font-family: monospace; }
+    .b1 { font-weight: bold; color: #000; }
+    .b0 { color: #aaa; }
+    
+    .op-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 4px 0;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .op-line { flex: 1; height: 1px; background: #eee; }
+    .op-label { font-weight: 600; color: #555; }
+    
+    /* Stats */
+    .stats {
+      padding: 16px;
+      border-top: 1px solid var(--border);
+      background: #fafafa;
+      font-size: 0.85rem;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .stats-val { font-family: monospace; margin-left: 8px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Generalized Gray Code Explorer</h1>
+  <p class="sub">Explore Hamiltonian paths on S_k × Z_n using σ and T operators</p>
+</header>
+
+<div class="grid">
+  <div class="controls">
+    <label>
+      Mode
+      <select id="sel-mode" onchange="toggleMode()">
+        <option value="generalized">Generalized (Any n, k)</option>
+        <option value="original">Original 12-bit (Neo-Riemannian PLR)</option>
+      </select>
+    </label>
+
+    <!-- SYSTEM DEF -->
+    <div class="panel" id="panel-system">
+      <h3>1. Define System</h3>
+      <label>
+        Circle Size (n)
+        <input type="number" id="input-n" value="10" />
+      </label>
+      <label style="margin-top: 12px;">
+        Intervals (number of zeroes, comma separated)
+        <input type="text" id="input-ivs" value="0, 1, 2, 3" />
+      </label>
+      <label style="margin-top: 12px; flex-direction: row; align-items: center; gap: 8px; cursor: pointer;">
+        <input type="checkbox" id="check-t" checked style="cursor: pointer;" />
+        Include T and T⁻
+      </label>
+      <button class="secondary" onclick="loadSystem()" style="margin-top: 16px;">Update System</button>
+    </div>
+
+    <!-- CONFIG -->
+    <div class="panel">
+      <h3>2. Configure Walk</h3>
+      <label>
+        Starting Chord
+        <select id="sel-start"></select>
+      </label>
+      <label style="margin-top: 16px;">
+        Priority Order
+        <span style="font-size: 0.8rem; color: var(--muted); font-weight: normal; margin-top:-4px;">Drag to reorder.</span>
+        <div class="priority-list" id="priority-list">
+        </div>
+      </label>
+      <button id="btn-run" onclick="runGreedy()" style="margin-top: 16px;">Run Walk</button>
+    </div>
+  </div>
+
+  <div class="output-section" id="output-section">
+    <div class="output-header">
+      <strong>Output</strong>
+      <span id="stat-prio-path" style="color: var(--muted);">Update system and Run to see results</span>
+    </div>
+    <div id="sigma-toggle-bar" style="display:none; padding:8px 16px; border-bottom:1px solid var(--border); background:#fafafa; font-size:0.85rem;">
+      <label style="flex-direction:row; align-items:center; gap:8px; cursor:pointer; font-weight:normal;">
+        <input type="checkbox" id="check-sigma" style="cursor:pointer;" /> Show σ equivalents
+      </label>
+    </div>
+    <div class="output-scroll" id="output-scroll">
+      <div style="color: var(--muted); font-size: 0.9rem; text-align: center; padding: 40px 0;">
+        Awaiting input...
+      </div>
+    </div>
+    <div class="stats" id="stats" style="display: none;">
+      <div><strong>Reachable Chords:</strong> <span class="stats-val" id="stat-reachable"></span></div>
+      <div><strong>Unique Intervals:</strong> <span class="stats-val" id="stat-intervals"></span></div>
+      <div><strong>Op Counts:</strong> <span class="stats-val" id="stat-ops"></span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ────────────────────────────────────────────
+// Core Math Logic
+// ────────────────────────────────────────────
+function fs(set) { return JSON.stringify(Array.from(set).sort((a,b)=>a-b)); }
+function parseFs(str) { return new Set(JSON.parse(str)); }
+function formatSet(set) { return `{${Array.from(set).sort((a,b)=>a-b).join(', ')}}`; }
+function eq(a, b) { return a === b; }
+
+function getIntervals(chord, n) {
+  const notes = Array.from(chord).sort((a,b)=>a-b);
+  const k = notes.length;
+  const ivs = [];
+  for(let i=0; i<k-1; i++) ivs.push(notes[i+1] - notes[i]);
+  ivs.push(n - notes[k-1] + notes[0]);
+  return ivs;
+}
+
+function applySigma(chord, i, n) {
+  const notes = Array.from(chord).sort((a,b)=>a-b);
+  const ivs = getIntervals(chord, n);
+  const shift = ivs[i+1] - ivs[i];
+  const moved = (notes[i+1] + shift + n) % n;
+  const newSet = new Set(chord);
+  newSet.delete(notes[i+1]);
+  newSet.add(moved);
+  return newSet;
+}
+
+function applyT(chord, n) { return new Set(Array.from(chord).map(p => (p+1)%n)); }
+function applyTinv(chord, n) { return new Set(Array.from(chord).map(p => (p-1+n)%n)); }
+function toBits(chord, n) {
+  let bits = '';
+  for(let i=0; i<n; i++) bits += chord.has(i) ? '1' : '0';
+  return bits;
+}
+
+// Original PLR Logic
+const NOTES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const triads = {};
+const triadKeys = {};
+for (let r = 0; r < 12; r++) {
+  const maj = fs(new Set([r, (r+4)%12, (r+7)%12]));
+  const min = fs(new Set([r, (r+3)%12, (r+7)%12]));
+  triads[maj] = `${NOTES[r]} maj`;
+  triads[min] = `${NOTES[r]} min`;
+  triadKeys[`${NOTES[r]} maj`] = maj;
+  triadKeys[`${NOTES[r]} min`] = min;
+}
+
+function P(k) {
+  for (let r = 0; r < 12; r++) {
+    if (eq(k, fs(new Set([r,(r+4)%12,(r+7)%12])))) return fs(new Set([r,(r+3)%12,(r+7)%12]));
+    if (eq(k, fs(new Set([r,(r+3)%12,(r+7)%12])))) return fs(new Set([r,(r+4)%12,(r+7)%12]));
+  }
+}
+function L(k) {
+  for (let r = 0; r < 12; r++) {
+    if (eq(k, fs(new Set([r,(r+4)%12,(r+7)%12])))) return fs(new Set([(r+4)%12,(r+7)%12,(r-1+12)%12]));
+    if (eq(k, fs(new Set([r,(r+3)%12,(r+7)%12])))) return fs(new Set([r,(r+3)%12,(r+8)%12]));
+  }
+}
+function R(k) {
+  for (let r = 0; r < 12; r++) {
+    if (eq(k, fs(new Set([r,(r+4)%12,(r+7)%12])))) return fs(new Set([r,(r+4)%12,(r+9)%12]));
+    if (eq(k, fs(new Set([r,(r+3)%12,(r+7)%12])))) return fs(new Set([(r+3)%12,(r+7)%12,(r+10)%12]));
+  }
+}
+
+let MODE = 'generalized';
+let CURRENT_N = 12;
+let CURRENT_K = 3;
+let ALL_CHORDS = [];
+let TOTAL_REACHABLE = 0;
+let GENS = {};
+let GEN_NAMES = [];
+
+// ────────────────────────────────────────────
+// UI Logic
+// ────────────────────────────────────────────
+function toggleMode() {
+  MODE = document.getElementById('sel-mode').value;
+  document.getElementById('sigma-toggle-bar').style.display = (MODE === 'original') ? 'block' : 'none';
+  if (MODE === 'original') {
+    document.getElementById('panel-system').style.display = 'none';
+    loadOriginalSystem();
+  } else {
+    document.getElementById('panel-system').style.display = 'block';
+    loadSystem();
+  }
+}
+
+function loadOriginalSystem() {
+  CURRENT_N = 12;
+  CURRENT_K = 3;
+  GENS = { 'P': P, 'L': L, 'R': R };
+  GEN_NAMES = ['L', 'R', 'P'];
+  
+  ALL_CHORDS = Object.keys(triads);
+  TOTAL_REACHABLE = 24;
+
+  const selStart = document.getElementById('sel-start');
+  selStart.innerHTML = '';
+  // Sort alphabetically by note name
+  const allNames = Object.values(triads).sort((a,b) => {
+    const noteA = a.split(' ')[0], typeA = a.split(' ')[1];
+    const noteB = b.split(' ')[0], typeB = b.split(' ')[1];
+    const ni = NOTES.indexOf(noteA) - NOTES.indexOf(noteB);
+    if (ni !== 0) return ni;
+    return typeA.localeCompare(typeB);
+  });
+  allNames.forEach(name => {
+    const opt = document.createElement('option');
+    opt.value = triadKeys[name];
+    opt.textContent = name;
+    if (name === 'C maj') opt.selected = true;
+    selStart.appendChild(opt);
+  });
+  
+  const prioList = document.getElementById('priority-list');
+  prioList.innerHTML = '';
+  GEN_NAMES.forEach(name => {
+    const div = document.createElement('div');
+    div.className = 'priority-item';
+    div.dataset.op = name;
+    div.draggable = true;
+    div.innerHTML = `<span class="drag-handle">≡</span> <strong>${name}</strong>`;
+    prioList.appendChild(div);
+  });
+  setupDragAndDrop();
+
+  document.getElementById('output-scroll').innerHTML = '<div style="color: var(--muted); font-size: 0.9rem; text-align: center; padding: 40px 0;">Original PLR system loaded. Click Run Walk to begin.</div>';
+  document.getElementById('stat-prio-path').innerHTML = `Ready (${TOTAL_REACHABLE} nodes)`;
+  document.getElementById('stats').style.display = 'none';
+}
+
+function loadSystem() {
+  const n = parseInt(document.getElementById('input-n').value);
+  const ivStr = document.getElementById('input-ivs').value;
+  const zeroIvs = ivStr.split(',').map(s => parseInt(s.trim())).filter(x => !isNaN(x));
+  const includeT = document.getElementById('check-t').checked;
+  
+  CURRENT_N = n;
+  CURRENT_K = zeroIvs.length;
+
+  if (zeroIvs.reduce((a,b)=>a+b,0) !== n - CURRENT_K) {
+    alert(`Error: The intervals [${zeroIvs.join(', ')}] sum to ${zeroIvs.reduce((a,b)=>a+b,0)}, but for circle size n=${n} and k=${CURRENT_K} notes, the number of zeroes must sum to n - k = ${n - CURRENT_K}.`);
+    return;
+  }
+  
+  const ivs = zeroIvs.map(x => x + 1);
+  
+  // Base chord
+  let notes = [0];
+  for(let i=0; i<CURRENT_K-1; i++) {
+    notes.push(notes[notes.length-1] + ivs[i]);
+  }
+  const startChord = new Set(notes);
+  const startKey = fs(startChord);
+  
+  // Generators
+  GENS = {};
+  GEN_NAMES = [];
+  for(let i=0; i<CURRENT_K-1; i++) {
+    const name = `σ${i}`;
+    GENS[name] = (k) => fs(applySigma(parseFs(k), i, n));
+    GEN_NAMES.push(name);
+  }
+  if (includeT) {
+    GENS['T'] = (k) => fs(applyT(parseFs(k), n));
+    GEN_NAMES.push('T');
+    GENS['T⁻'] = (k) => fs(applyTinv(parseFs(k), n));
+    GEN_NAMES.push('T⁻');
+  }
+  
+  // BFS all reachable
+  const reachable = new Set([startKey]);
+  let frontier = [startKey];
+  while(frontier.length > 0) {
+    const nf = [];
+    for(const c of frontier) {
+      for(const name of GEN_NAMES) {
+        const nxt = GENS[name](c);
+        if(!reachable.has(nxt)) {
+          reachable.add(nxt);
+          nf.push(nxt);
+        }
+      }
+    }
+    frontier = nf;
+  }
+  
+  ALL_CHORDS = Array.from(reachable);
+  TOTAL_REACHABLE = ALL_CHORDS.length;
+  
+  // populate UI
+  const selStart = document.getElementById('sel-start');
+  selStart.innerHTML = '';
+  // sort for nice display
+  ALL_CHORDS.sort((a,b) => {
+      let arrA = Array.from(parseFs(a)).sort((x,y)=>x-y);
+      let arrB = Array.from(parseFs(b)).sort((x,y)=>x-y);
+      for(let i=0; i<Math.min(arrA.length, arrB.length); i++) {
+          if (arrA[i] !== arrB[i]) return arrA[i] - arrB[i];
+      }
+      return 0;
+  });
+
+  ALL_CHORDS.forEach(k => {
+    const opt = document.createElement('option');
+    opt.value = k;
+    opt.textContent = formatSet(parseFs(k));
+    if (k === startKey) opt.selected = true;
+    selStart.appendChild(opt);
+  });
+  
+  const prioList = document.getElementById('priority-list');
+  prioList.innerHTML = '';
+  GEN_NAMES.forEach(name => {
+    const div = document.createElement('div');
+    div.className = 'priority-item';
+    div.dataset.op = name;
+    div.draggable = true;
+    div.innerHTML = `<span class="drag-handle">≡</span> <strong>${name}</strong>`;
+    prioList.appendChild(div);
+  });
+  setupDragAndDrop();
+
+  // clear old output
+  document.getElementById('output-scroll').innerHTML = '<div style="color: var(--muted); font-size: 0.9rem; text-align: center; padding: 40px 0;">System loaded. Click Run Walk to begin.</div>';
+  document.getElementById('stat-prio-path').innerHTML = `Ready (${TOTAL_REACHABLE} nodes)`;
+  document.getElementById('stats').style.display = 'none';
+}
+
+function setupDragAndDrop() {
+  let dragSrc = null;
+  document.querySelectorAll('.priority-item').forEach(item => {
+    item.addEventListener('dragstart', e => {
+      dragSrc = item;
+      item.style.opacity = '0.4';
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    item.addEventListener('dragend', () => {
+      item.style.opacity = '1';
+      document.querySelectorAll('.priority-item').forEach(i => i.classList.remove('over'));
+    });
+    item.addEventListener('dragover', e => {
+      e.preventDefault();
+      document.querySelectorAll('.priority-item').forEach(i => i.classList.remove('over'));
+      item.classList.add('over');
+      return false;
+    });
+    item.addEventListener('drop', e => {
+      e.stopPropagation();
+      if (dragSrc !== item) {
+        const list = document.getElementById('priority-list');
+        const items = [...list.children];
+        const srcIdx = items.indexOf(dragSrc);
+        const tgtIdx = items.indexOf(item);
+        if (srcIdx < tgtIdx) list.insertBefore(dragSrc, item.nextSibling);
+        else list.insertBefore(dragSrc, item);
+      }
+      return false;
+    });
+  });
+}
+
+function getPriority() {
+  return [...document.querySelectorAll('.priority-item')].map(el => el.dataset.op);
+}
+
+function greedy(startKey, priority) {
+  const path = [startKey];
+  const visited = new Set([startKey]);
+  let cur = startKey;
+  while (true) {
+    let moved = false;
+    for (const name of priority) {
+      const nxt = GENS[name](cur);
+      if (nxt && !visited.has(nxt)) {
+        path.push(nxt);
+        visited.add(nxt);
+        cur = nxt;
+        moved = true;
+        break;
+      }
+    }
+    if (!moved) break;
+  }
+  return path;
+}
+
+function findOp(prev, cur) {
+  for (const name of GEN_NAMES) {
+    if (GENS[name](prev) === cur) return name;
+  }
+  return '?';
+}
+
+// Determine which σ_i (+ optional T) a PLR chord-to-chord transition corresponds to.
+// σ_i is defined as: shift note p_{i+1} by (d_{i+1} - d_i), swapping d_i ↔ d_{i+1}.
+// If the moved note crosses the 0/n boundary, the sorted order rotates, so it
+// may appear as a wrap-around (σ_{k-1}) combined with transposition.
+function determineSigmaEquiv(prevKey, curKey, n) {
+  const prevSet = parseFs(prevKey);
+  const curSet  = parseFs(curKey);
+  const prevNotes = Array.from(prevSet).sort((a,b) => a-b);
+  const curNotes  = Array.from(curSet).sort((a,b) => a-b);
+  const k = prevNotes.length;
+
+  // Find which note was removed and which was added
+  const removed = prevNotes.filter(x => !curSet.has(x));
+  const added   = curNotes.filter(x => !prevSet.has(x));
+  if (removed.length !== 1 || added.length !== 1) return '?';
+
+  const movedFrom = removed[0];
+  const movedTo   = added[0];
+
+  // Which positional index was movedFrom in the sorted prev array?
+  const fromIdx = prevNotes.indexOf(movedFrom);
+
+  // Try each σ_i on the prev chord and see if it produces the cur chord
+  for (let i = 0; i < k - 1; i++) {
+    const result = applySigma(prevSet, i, n);
+    if (fs(result) === curKey) return `σ${i}`;
+  }
+
+  // Try σ_i composed with T shifts
+  for (let i = 0; i < k - 1; i++) {
+    const sigResult = applySigma(prevSet, i, n);
+    // Try T and T⁻ up to n times
+    let fwd = sigResult, bwd = sigResult;
+    for (let t = 1; t <= n; t++) {
+      fwd = applyT(fwd, n);
+      if (fs(fwd) === curKey) return `σ${i} ∘ T${t > 1 ? '^' + t : ''}`;
+      bwd = applyTinv(bwd, n);
+      if (fs(bwd) === curKey) return `σ${i} ∘ T⁻${t > 1 ? '^' + t : ''}`;
+    }
+  }
+
+  return `moved p${fromIdx}`;
+}
+
+function runGreedy() {
+  if (GEN_NAMES.length === 0) {
+    alert("Please click 'Update System' first.");
+    return;
+  }
+
+  const startKey  = document.getElementById('sel-start').value;
+  const priority  = getPriority();
+
+  const path = greedy(startKey, priority);
+
+  document.getElementById('stat-prio-path').innerHTML = 
+    `Priority: <strong>${priority.join(', ')}</strong> &nbsp;|&nbsp; Path: <strong>${path.length} / ${TOTAL_REACHABLE}</strong>`;
+
+  const scroll = document.getElementById('output-scroll');
+  scroll.innerHTML = '';
+
+  const header = document.createElement('div');
+  header.className = 'row col-header';
+  header.innerHTML = `<span>#</span><span>Chord</span><span>${CURRENT_N}-bit string</span><span>Intervals</span>`;
+  scroll.appendChild(header);
+
+  const opCounts = {};
+  GEN_NAMES.forEach(n => opCounts[n] = 0);
+  const uniqueIntervals = new Set();
+
+  const showSigma = MODE === 'original' && document.getElementById('check-sigma').checked;
+
+  path.forEach((k, i) => {
+    // Op arrow
+    if (i > 0) {
+      const op = findOp(path[i-1], k);
+      opCounts[op] = (opCounts[op]||0) + 1;
+      let sigmaAnnotation = '';
+      if (showSigma) {
+        const equiv = determineSigmaEquiv(path[i-1], k, CURRENT_N);
+        sigmaAnnotation = ` <span style="color:#888; font-weight:normal; font-size:0.75rem;">(≡ ${equiv})</span>`;
+      }
+      const ar = document.createElement('div');
+      ar.className = 'op-row';
+      ar.innerHTML = `<div class="op-line"></div><span class="op-label">${op}${sigmaAnnotation}</span><div class="op-line"></div>`;
+      scroll.appendChild(ar);
+    }
+
+    const setObj = parseFs(k);
+    const bits = toBits(setObj, CURRENT_N);
+    const ivs  = getIntervals(setObj, CURRENT_N);
+    const zeroIvs = ivs.map(x => x - 1);
+    const ivStr = `(${zeroIvs.join(', ')})`;
+    uniqueIntervals.add(ivStr);
+
+    const bitsHtml = [...bits].map(b => b==='1' ? `<span class="b1">1</span>` : `<span class="b0">0</span>`).join('');
+    
+    // Display name based on mode
+    let chordDisplay = formatSet(setObj);
+    if (MODE === 'original' && triads[k]) {
+      chordDisplay = triads[k];
+    }
+
+    const row = document.createElement('div');
+    row.className = 'row';
+    row.innerHTML = `
+      <span class="row-idx">${i+1}</span>
+      <span class="row-name">${chordDisplay}</span>
+      <span class="row-bits">${bitsHtml}</span>
+      <span class="row-interval">${ivStr}</span>
+    `;
+    scroll.appendChild(row);
+  });
+
+  // Stats
+  document.getElementById('stats').style.display = 'flex';
+  if (MODE === 'original') {
+    document.getElementById('stat-reachable').textContent = `24 (24 major/minor triads)`;
+  } else {
+    document.getElementById('stat-reachable').textContent = `${TOTAL_REACHABLE} (Expected: k! * (n/k) = ${CURRENT_K}! * ${CURRENT_N/CURRENT_K} = ${(Array.from({length: CURRENT_K}, (_, i) => i + 1).reduce((a,b)=>a*b,1)) * (CURRENT_N/CURRENT_K)})`;
+  }
+  document.getElementById('stat-intervals').textContent =
+    [...uniqueIntervals].sort().join(', ') || '—';
+  document.getElementById('stat-ops').innerHTML =
+    Object.entries(opCounts).map(([op, c]) => `${op}: ${c}`).join(' &nbsp;|&nbsp; ');
+}
+
+// Init on load
+window.addEventListener('DOMContentLoaded', loadSystem);
+</script>
+
+</body>
+</html>
